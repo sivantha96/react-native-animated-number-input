@@ -1,14 +1,30 @@
-# OSX
-#
-.DS_Store
+# Node
+node_modules/
 
-# VSCode
+# Build output
+/dist/
+/build/
+*.tgz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
 .vscode/
+.idea/
 jsconfig.json
 
+# Logs
+*.log
+
+# Env
+.env*
+
+# macOS
+*.DS_Store
+
 # Xcode
-#
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -17,27 +33,38 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
+DerivedData/
 *.hmap
 *.ipa
 *.xcuserstate
 project.xcworkspace
 
-# Android/IJ
-#
+# Android
 .classpath
-.cxx
-.gradle
-.idea
+.cxx/
+.gradle/
+.idea/
 .project
-.settings
+.settings/
 local.properties
 android.iml
-android/app/libs
+android/app/libs/
 android/keystores/debug.keystore
+
+# Example app
+/example/node_modules/
+/example/dist/
+/example/build/
+/example/.expo/
+/example/.expo-shared/
+/example/*.log
+
+# Others
+*.tmp
+*.swp
 
 # Cocoapods
 #
@@ -55,3 +82,12 @@ yarn-error.log
 
 # Expo
 .expo/*
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

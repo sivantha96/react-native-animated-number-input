@@ -1,13 +1,7 @@
 {
-  "platforms": [
-    "apple",
-    "android",
-    "web"
-  ],
+  "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": [
-      "ReactNativeAnimatedNumberInputModule"
-    ]
+    "modules": ["ReactNativeAnimatedNumberInputModule"]
   },
   "android": {
     "modules": [

@@ -6,12 +6,17 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "test": "jest"
   },
   "dependencies": {
     "expo": "~52.0.46",
     "react": "18.3.1",
-    "react-native": "0.76.9"
+    "react-native": "0.76.9",
+    "react-native-reanimated": "^3.7.0",
+    "react-native-animated-number-input": "file:.."
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

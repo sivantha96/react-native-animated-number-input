@@ -1,0 +1,12 @@
+# Add files here to ignore them from eslint
+
+/.bundle
+/.husky
+/android
+/ios
+/node_modules
+metro.config.js
+/coverage
+/scripts
+/dist
+/build

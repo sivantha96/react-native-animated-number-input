@@ -6,10 +6,12 @@ module.exports = async (env, argv) => {
     {
       ...env,
       babel: {
-        dangerouslyAddModulePathsToTranspile: ['react-native-animated-number-input'],
+        dangerouslyAddModulePathsToTranspile: [
+          'react-native-animated-number-input',
+        ],
       },
     },
-    argv
+    argv,
   );
   config.resolve.modules = [
     path.resolve(__dirname, './node_modules'),

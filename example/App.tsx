@@ -1,73 +1,64 @@
-import { useEvent } from 'expo';
-import ReactNativeAnimatedNumberInput, { ReactNativeAnimatedNumberInputView } from 'react-native-animated-number-input';
-import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { AnimatedNumberInput } from 'react-native-animated-number-input';
 
-export default function App() {
-  const onChangePayload = useEvent(ReactNativeAnimatedNumberInput, 'onChange');
+export default function App(): React.JSX.Element {
+  const [value, setValue] = useState('123');
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        <Group name="Constants">
-          <Text>{ReactNativeAnimatedNumberInput.PI}</Text>
-        </Group>
-        <Group name="Functions">
-          <Text>{ReactNativeAnimatedNumberInput.hello()}</Text>
-        </Group>
-        <Group name="Async functions">
-          <Button
-            title="Set value"
-            onPress={async () => {
-              await ReactNativeAnimatedNumberInput.setValueAsync('Hello from JS!');
-            }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}>
+        <Text style={styles.header}>{'Animated\nNumber Input\nDemo'}</Text>
+        <View style={styles.demoContainer}>
+          <AnimatedNumberInput
+            autoFocus
+            value={value}
+            onChangeText={setValue}
+            precision={2}
+            maxFontSize={60}
+            textStyle={styles.textStyle}
+            placeholder="Enter a number"
+            prefix="$"
+            suffix=" USD"
+            decimalSeparator=","
+            thousandSeparator="."
+            animationDuration={200}
           />
-        </Group>
-        <Group name="Events">
-          <Text>{onChangePayload?.value}</Text>
-        </Group>
-        <Group name="Views">
-          <ReactNativeAnimatedNumberInputView
-            url="https://www.example.com"
-            onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
-            style={styles.view}
-          />
-        </Group>
-      </ScrollView>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-function Group(props: { name: string; children: React.ReactNode }) {
-  return (
-    <View style={styles.group}>
-      <Text style={styles.groupHeader}>{props.name}</Text>
-      {props.children}
-    </View>
-  );
-}
-
-const styles = {
-  header: {
-    fontSize: 30,
-    margin: 20,
-  },
-  groupHeader: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  group: {
-    margin: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-  },
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    justifyContent: 'center',
   },
-  view: {
-    flex: 1,
-    height: 200,
+  header: {
+    fontSize: 50,
+    fontWeight: '300',
+    marginBottom: 48,
+    textAlign: 'right',
+    width: '90%',
   },
-};
+  demoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '90%',
+    paddingLeft: 30,
+  },
+  textStyle: {
+    color: '#222',
+    fontWeight: '800',
+  },
+});
