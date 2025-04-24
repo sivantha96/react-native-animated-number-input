@@ -36,7 +36,7 @@ const AnimatedText = ({
   animationDuration: number;
   exiting?: EntryOrExitLayoutType;
   entering?: EntryOrExitLayoutType;
-}) => {
+}): React.JSX.Element => {
   const isFirstRender = useRef(true);
   const animatedWidth = useSharedValue(size);
   const animatedFontSize = useSharedValue(fontSize);
@@ -52,6 +52,7 @@ const AnimatedText = ({
       animatedWidth.value = withTiming(size, animationConfig);
       animatedFontSize.value = withTiming(fontSize, animationConfig);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size, fontSize, animationDuration]);
 
   const animatedStyle = useAnimatedStyle(() => ({
