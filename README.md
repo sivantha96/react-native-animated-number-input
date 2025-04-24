@@ -62,7 +62,7 @@ export default function MyScreen() {
       containerStyle={{ width: 200 }}
       prefix="$"
       suffix=" USD"
-      decimalSeparator="," 
+      decimalSeparator=","
       thousandSeparator="."
       animationDuration={200}
       placeholder="Enter a number"
@@ -82,23 +82,23 @@ A fully controlled, animated, auto-sizing number input component.
 
 #### Props
 
-| Prop                | Type                                              | Default      | Description                                                                                 |
-|---------------------|---------------------------------------------------|--------------|---------------------------------------------------------------------------------------------|
-| `value`             | `string`                                          | **Required** | The current value of the input (controlled).                                                |
-| `onChangeText`      | `(value: string) => void`                         | **Required** | Callback when the value changes.                                                            |
-| `textStyle`         | `TextStyle`                                       | `{}`         | Style for the input text.                                                                   |
-| `containerStyle`    | `ViewStyle`                                       | `{}`         | Style for the container.                                                                    |
-| `decimalSeparator`  | `string`                                          | `'.'`        | Character to use as the decimal separator.                                                  |
-| `thousandSeparator` | `string`                                          | `','`        | Character to use as the thousand separator.                                                 |
-| `prefix`            | `string`                                          | `undefined`  | String to display before the number (e.g., currency symbol).                                |
-| `suffix`            | `string`                                          | `undefined`  | String to display after the number (e.g., unit).                                            |
-| `precision`         | `number`                                          | `2`          | Number of decimal places to allow.                                                          |
-| `animationDuration` | `number`                                          | `100`        | Duration of digit transition animations in milliseconds.                                    |
-| `maxFontSize`       | `number`                                          | `64`         | Maximum font size for the digits.                                                           |
-| `exiting`           | `EntryOrExitLayoutType` (Reanimated animation)    | `FadeOutDown.duration(animationDuration)` | Animation for exiting digits.                        |
-| `entering`          | `EntryOrExitLayoutType` (Reanimated animation)    | `FadeInDown.duration(animationDuration)`  | Animation for entering digits.                        |
-| `placeholder`       | `string`                                          | `undefined`  | Placeholder text when the value is empty.                                                   |
-| ...TextInputProps   | All other `TextInput` props except `value`/`onChangeText` |              | You can pass any other valid `TextInput` prop (e.g., `autoFocus`, `keyboardType`, etc.).    |
+| Prop                | Type                                                      | Default                                   | Description                                                                              |
+| ------------------- | --------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `value`             | `string`                                                  | **Required**                              | The current value of the input (controlled).                                             |
+| `onChangeText`      | `(value: string) => void`                                 | **Required**                              | Callback when the value changes.                                                         |
+| `textStyle`         | `TextStyle`                                               | `{}`                                      | Style for the input text.                                                                |
+| `containerStyle`    | `ViewStyle`                                               | `{}`                                      | Style for the container.                                                                 |
+| `decimalSeparator`  | `string`                                                  | `'.'`                                     | Character to use as the decimal separator.                                               |
+| `thousandSeparator` | `string`                                                  | `','`                                     | Character to use as the thousand separator.                                              |
+| `prefix`            | `string`                                                  | `undefined`                               | String to display before the number (e.g., currency symbol).                             |
+| `suffix`            | `string`                                                  | `undefined`                               | String to display after the number (e.g., unit).                                         |
+| `precision`         | `number`                                                  | `2`                                       | Number of decimal places to allow.                                                       |
+| `animationDuration` | `number`                                                  | `100`                                     | Duration of digit transition animations in milliseconds.                                 |
+| `maxFontSize`       | `number`                                                  | `64`                                      | Maximum font size for the digits.                                                        |
+| `exiting`           | `EntryOrExitLayoutType` (Reanimated animation)            | `FadeOutDown.duration(animationDuration)` | Animation for exiting digits.                                                            |
+| `entering`          | `EntryOrExitLayoutType` (Reanimated animation)            | `FadeInDown.duration(animationDuration)`  | Animation for entering digits.                                                           |
+| `placeholder`       | `string`                                                  | `undefined`                               | Placeholder text when the value is empty.                                                |
+| ...TextInputProps   | All other `TextInput` props except `value`/`onChangeText` |                                           | You can pass any other valid `TextInput` prop (e.g., `autoFocus`, `keyboardType`, etc.). |
 
 #### Example with all features
 
@@ -111,7 +111,7 @@ A fully controlled, animated, auto-sizing number input component.
   containerStyle={{ width: 200 }}
   prefix="$"
   suffix=" USD"
-  decimalSeparator="," 
+  decimalSeparator=","
   thousandSeparator="."
   animationDuration={200}
   placeholder="Enter a number"
@@ -125,6 +125,7 @@ A fully controlled, animated, auto-sizing number input component.
 ## 🧪 Example App
 
 See the [`example/`](./example) folder for a working Expo + Bare React Native demo. The example demonstrates:
+
 - Animated transitions
 - Auto font sizing
 - Prefix/suffix
