@@ -13,7 +13,8 @@ A performant, animated, and auto-sizing number input for React Native and Expo. 
 
 <!-- GIF or screenshot demo -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sivantha96/react-native-animated-number-input/main/demo.gif" alt="Animated Number Input Demo" width="350" />
+  <img src="./example/demo-1.gif" alt="Animated Number Input Demo 1" width="350" />
+  <img src="./example/demo-2.gif" alt="Animated Number Input Demo 2" width="350" />
 </p>
 
 ---

@@ -28,9 +28,6 @@ export default function App(): React.JSX.Element {
             textStyle={styles.textStyle}
             placeholder="Enter a number"
             prefix="$"
-            suffix=" USD"
-            decimalSeparator=","
-            thousandSeparator="."
             animationDuration={200}
           />
         </View>
