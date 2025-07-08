@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/sivantha96/react-native-animated-number-input/compare/v1.0.0...v1.1.0) (2025-07-08)
+
+
+### Features
+
+* add custom placeholder styles prop and use dynamic font size for placeholder text ([32bcfaf](https://github.com/sivantha96/react-native-animated-number-input/commit/32bcfaf0d12352b071c9dd1e052842e3522d0b9e))
+
 # 1.0.0 (2025-05-03)
 
 
