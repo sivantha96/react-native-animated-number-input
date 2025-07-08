@@ -27,6 +27,7 @@ export interface AnimatedNumberInputProps
   value: string;
   onChangeText?: (value: string) => void;
   textStyle?: TextStyle;
+  placeholderStyles?: TextStyle;
   containerStyle?: ViewStyle;
   decimalSeparator?: string;
   thousandSeparator?: string;
@@ -53,6 +54,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
   entering,
   prefix,
   suffix,
+  placeholderStyles = {},
   ...textInputProps
 }) => {
   const inputRef = useRef<TextInput>(null);
@@ -211,7 +213,11 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
             })
           : textInputProps.placeholder && (
               <Text
-                style={[styles.placeholder, { fontSize: maxFontSize * 0.4 }]}>
+                style={[
+                  styles.placeholder,
+                  { fontSize: autoFontSize },
+                  placeholderStyles,
+                ]}>
                 {textInputProps.placeholder}
               </Text>
             )}
@@ -268,7 +274,6 @@ const styles = StyleSheet.create({
   placeholder: {
     textAlign: 'right',
     fontWeight: '800',
-    color: 'gray',
   },
 });
 
