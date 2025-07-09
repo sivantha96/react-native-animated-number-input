@@ -38,6 +38,7 @@ export interface AnimatedNumberInputProps
   maxFontSize?: number;
   exiting?: EntryOrExitLayoutType;
   entering?: EntryOrExitLayoutType;
+  allowLeadingZeros?: boolean;
 }
 
 const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
@@ -54,6 +55,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
   entering,
   prefix,
   suffix,
+  allowLeadingZeros = false,
   placeholderStyles = {},
   ...textInputProps
 }) => {
@@ -63,8 +65,34 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
   const handleChangeText = useCallback(
     (text: string) => {
       if (onChangeText) {
+        let cleanText = text;
+        if (cleanText.startsWith('.')) {
+          cleanText = '0.';
+        }
+
+        if (cleanText.startsWith('-.')) {
+          cleanText = '-0.';
+        }
+
+        if (!allowLeadingZeros) {
+          // Remove leading zeros except for the case of "0."
+          cleanText = cleanText.replace(/^0+(?!\.)/, '0');
+        }
+
+        if (!allowLeadingZeros && /^0+\d/.test(cleanText)) {
+          // If the text starts with leading zero and followed by a digit, remove the leading zeros
+          // Remove leading zeros except for the case of "0."
+          cleanText = cleanText.replace(/^0+(?!\.)/, '');
+        }
+
+        if (!allowLeadingZeros && /^-0+\d/.test(cleanText)) {
+          // If the text starts with a negative sign & a leading zero and followed by a digit, remove the leading zero
+          // Remove leading zeros except for the case of "0."
+          cleanText = cleanText.replace(/^-0+(?!\.)/, '-');
+        }
+
         const formattedText = formatNumber(
-          text,
+          cleanText,
           decimalSeparator,
           thousandSeparator,
           precision,
@@ -72,7 +100,13 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
         onChangeText(formattedText);
       }
     },
-    [decimalSeparator, onChangeText, precision, thousandSeparator],
+    [
+      allowLeadingZeros,
+      decimalSeparator,
+      onChangeText,
+      precision,
+      thousandSeparator,
+    ],
   );
 
   const handleContainerPress = useCallback(() => {
@@ -170,7 +204,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
         {...textInputProps}
       />
       <View style={styles.visualContainer} pointerEvents="none">
-        {renderedDigits.length > 0 &&
+        {value.trim() !== '' &&
           prefix &&
           prefix.length > 0 &&
           prefix
@@ -221,7 +255,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                 {textInputProps.placeholder}
               </Text>
             )}
-        {renderedDigits.length > 0 &&
+        {value.trim() !== '' &&
           suffix &&
           suffix.length > 0 &&
           suffix
