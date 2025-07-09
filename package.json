@@ -1,6 +1,6 @@
 {
   "name": "react-native-animated-number-input",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A performant, animated, auto-sizing number input for React Native and Expo.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

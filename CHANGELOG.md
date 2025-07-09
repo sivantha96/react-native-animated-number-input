@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sivantha96/react-native-animated-number-input/compare/v1.1.0...v1.2.0) (2025-07-09)
+
+
+### Features
+
+* add support to include leading zeros for input ([7bf76b8](https://github.com/sivantha96/react-native-animated-number-input/commit/7bf76b80eb4962bb6c737fe0000d0c9d2382bdca))
+
 # [1.1.0](https://github.com/sivantha96/react-native-animated-number-input/compare/v1.0.0...v1.1.0) (2025-07-08)
 
 
