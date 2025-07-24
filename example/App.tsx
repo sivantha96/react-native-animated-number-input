@@ -21,14 +21,19 @@ export default function App(): React.JSX.Element {
         <View style={styles.demoContainer}>
           <AnimatedNumberInput
             autoFocus
-            value={value}
-            onChangeText={setValue}
-            precision={2}
+            options={{
+              prefix: '$',
+              decimalSeparator: '.',
+              groupSeparator: ',',
+              precision: 2,
+            }}
             maxFontSize={60}
             textStyle={styles.textStyle}
             placeholder="Enter a number"
-            prefix="$"
             animationDuration={200}
+            onChangeText={(text, rawText) => {
+              setValue(text);
+            }}
           />
         </View>
       </KeyboardAvoidingView>
@@ -57,5 +62,10 @@ const styles = StyleSheet.create({
   textStyle: {
     color: '#222',
     fontWeight: '800',
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
   },
 });

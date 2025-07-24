@@ -11,103 +11,58 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TextInputProps,
   TextStyle,
   View,
   ViewStyle,
 } from 'react-native';
+import { MaskedTextInput, MaskedTextInputProps } from 'react-native-mask-text';
 
 import { useCharacterWidthRatioAuto } from '../hooks/useCharacterWidthRatioAuto';
 import { usePrevious } from '../hooks/usePrevious';
-import { CharData, formatNumber, getDigits } from '../utils/numberUtils';
+import { CharData, getDigits } from '../utils/numberUtils';
 import AnimatedText, { EntryOrExitLayoutType } from './AnimatedText';
 
+export type NumberFormatOptions = {
+  prefix?: string;
+  decimalSeparator?: string;
+  groupSeparator?: string;
+  precision?: number;
+  groupSize?: number;
+  secondaryGroupSize?: number;
+  fractionGroupSeparator?: string;
+  fractionGroupSize?: number;
+  suffix?: string;
+};
+
 export interface AnimatedNumberInputProps
-  extends Omit<TextInputProps, 'value' | 'onChangeText'> {
-  value: string;
-  onChangeText?: (value: string) => void;
+  extends Omit<MaskedTextInputProps, 'type'> {
   textStyle?: TextStyle;
   placeholderStyles?: TextStyle;
   containerStyle?: ViewStyle;
-  decimalSeparator?: string;
-  thousandSeparator?: string;
-  prefix?: string;
-  suffix?: string;
-  precision?: number;
   animationDuration?: number;
   maxFontSize?: number;
   exiting?: EntryOrExitLayoutType;
   entering?: EntryOrExitLayoutType;
   allowLeadingZeros?: boolean;
+  options?: NumberFormatOptions;
 }
 
 const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
-  value,
-  onChangeText,
   textStyle = {},
   containerStyle = {},
-  decimalSeparator = '.',
-  thousandSeparator = ',',
-  precision = 2,
   animationDuration = 100,
   maxFontSize = 64,
   exiting,
   entering,
-  prefix,
-  suffix,
-  allowLeadingZeros = false,
   placeholderStyles = {},
-  ...textInputProps
+  options,
+  onChangeText,
+  placeholder,
+  ...props
 }) => {
   const inputRef = useRef<TextInput>(null);
   const [containerWidth, setContainerWidth] = useState<number>(0);
-
-  const handleChangeText = useCallback(
-    (text: string) => {
-      if (onChangeText) {
-        let cleanText = text;
-        if (cleanText.startsWith('.')) {
-          cleanText = '0.';
-        }
-
-        if (cleanText.startsWith('-.')) {
-          cleanText = '-0.';
-        }
-
-        if (!allowLeadingZeros) {
-          // Remove leading zeros except for the case of "0."
-          cleanText = cleanText.replace(/^0+(?!\.)/, '0');
-        }
-
-        if (!allowLeadingZeros && /^0+\d/.test(cleanText)) {
-          // If the text starts with leading zero and followed by a digit, remove the leading zeros
-          // Remove leading zeros except for the case of "0."
-          cleanText = cleanText.replace(/^0+(?!\.)/, '');
-        }
-
-        if (!allowLeadingZeros && /^-0+\d/.test(cleanText)) {
-          // If the text starts with a negative sign & a leading zero and followed by a digit, remove the leading zero
-          // Remove leading zeros except for the case of "0."
-          cleanText = cleanText.replace(/^-0+(?!\.)/, '-');
-        }
-
-        const formattedText = formatNumber(
-          cleanText,
-          decimalSeparator,
-          thousandSeparator,
-          precision,
-        );
-        onChangeText(formattedText);
-      }
-    },
-    [
-      allowLeadingZeros,
-      decimalSeparator,
-      onChangeText,
-      precision,
-      thousandSeparator,
-    ],
-  );
+  const [maskedValue, setMaskedValue] = useState('');
 
   const handleContainerPress = useCallback(() => {
     inputRef.current?.focus();
@@ -117,9 +72,18 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
     setContainerWidth(event.nativeEvent.layout.width);
   }, []);
 
+  const decimalSeparator = useMemo(
+    () => options?.decimalSeparator || '.',
+    [options?.decimalSeparator],
+  );
+  const thousandSeparator = useMemo(
+    () => options?.groupSeparator || ',',
+    [options?.groupSeparator],
+  );
+
   const digits = useMemo(
-    () => getDigits(value, decimalSeparator, thousandSeparator),
-    [decimalSeparator, value, thousandSeparator],
+    () => getDigits(maskedValue, decimalSeparator, thousandSeparator),
+    [maskedValue, decimalSeparator, thousandSeparator],
   );
 
   const prevDigits = usePrevious(digits);
@@ -152,8 +116,9 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
       0,
     );
 
-    if (prefix || suffix) {
-      totalCharUnits += (prefix?.length || 0) + (suffix?.length || 0);
+    if (options?.prefix || options?.suffix) {
+      totalCharUnits +=
+        (options?.prefix?.length || 0) + (options?.suffix?.length || 0);
     }
 
     const _autoFontSize =
@@ -175,13 +140,13 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
       (shouldScaleDown ? effectiveFontSize / naturalFontSize : 1);
     return { autoFontSize: _autoFontSize, digitWidth: calculatedDigitWidth };
   }, [
-    digits,
-    prefix,
-    suffix,
-    containerWidth,
     charWidthRatio,
-    maxFontSize,
+    containerWidth,
     decimalSeparator,
+    digits,
+    maxFontSize,
+    options?.prefix,
+    options?.suffix,
     thousandSeparator,
   ]);
 
@@ -193,34 +158,20 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
       accessibilityRole="button"
       accessibilityLabel="Edit number input"
       accessible>
-      <TextInput
+      <MaskedTextInput
+        {...props}
         ref={inputRef}
+        type="currency"
+        options={options}
+        onChangeText={(text, rawText) => {
+          setMaskedValue(text);
+          onChangeText?.(text, rawText);
+        }}
         style={[styles.hiddenInput, textStyle]}
-        value={value}
-        onChangeText={handleChangeText}
         keyboardType="numeric"
         accessibilityLabel="Number input field"
-        accessible
-        {...textInputProps}
       />
       <View style={styles.visualContainer} pointerEvents="none">
-        {value.trim() !== '' &&
-          prefix &&
-          prefix.length > 0 &&
-          prefix
-            .split('')
-            .map((p) => (
-              <AnimatedText
-                key={p}
-                size={digitWidth}
-                value={p}
-                fontSize={autoFontSize}
-                animationDuration={animationDuration}
-                textStyle={[textStyle, styles.digit]}
-                entering={entering}
-                exiting={exiting}
-              />
-            ))}
         {renderedDigits.length > 0
           ? renderedDigits.map((digit) => {
               const charWidth = digitWidth
@@ -245,33 +196,16 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                 />
               );
             })
-          : textInputProps.placeholder && (
+          : placeholder && (
               <Text
                 style={[
                   styles.placeholder,
                   { fontSize: autoFontSize },
                   placeholderStyles,
                 ]}>
-                {textInputProps.placeholder}
+                {placeholder}
               </Text>
             )}
-        {value.trim() !== '' &&
-          suffix &&
-          suffix.length > 0 &&
-          suffix
-            .split('')
-            .map((s) => (
-              <AnimatedText
-                key={s}
-                size={digitWidth}
-                value={s}
-                fontSize={autoFontSize}
-                animationDuration={animationDuration}
-                textStyle={[textStyle, styles.digit]}
-                entering={entering}
-                exiting={exiting}
-              />
-            ))}
       </View>
       {typeof ratio !== 'number' ? ratio : null}
     </Pressable>

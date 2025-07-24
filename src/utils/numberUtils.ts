@@ -36,8 +36,8 @@ export const formatNumber = (
 
 export const getDigits = (
   text: string,
-  decimalSeparator: string,
-  thousandSeparator: string,
+  decimalSeparator = '.',
+  thousandSeparator = ',',
 ): CharData[] => {
   const results: CharData[] = [];
   let commaSeparatorCount = 0;
