@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { AnimatedNumberInput } from 'react-native-animated-number-input';
+import { ZoomIn, ZoomOut } from 'react-native-reanimated';
 
 export default function App(): React.JSX.Element {
   const [value, setValue] = useState('123');
@@ -34,6 +35,8 @@ export default function App(): React.JSX.Element {
             onChangeText={(text, rawText) => {
               setValue(text);
             }}
+            entering={ZoomIn}
+            exiting={ZoomOut}
           />
         </View>
       </KeyboardAvoidingView>
