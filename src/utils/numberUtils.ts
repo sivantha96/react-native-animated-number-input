@@ -1,3 +1,7 @@
+import { AnimationConfigs, CharWithId, SeparatorType } from '../types';
+
+let globalId = 0;
+
 export type CharData = {
   char: string;
   isSeparator: boolean;
@@ -63,3 +67,117 @@ export const getDigits = (
   });
   return results;
 };
+
+export const updateCharList = (
+  newInput: string | number,
+  prev: CharWithId[],
+  separator: SeparatorType = 'comma',
+): CharWithId[] => {
+  const sepChar = separator === 'comma' ? ',' : '.';
+  const nextChars = newInput.toString().split('');
+  const next: CharWithId[] = [];
+  const used = new Set<number>();
+
+  const newSepIndexes = nextChars
+    .map((char, i) => ({ char, index: i }))
+    .filter((item) => item.char === sepChar);
+
+  const prevSeps = prev
+    .map((item, i) => ({ ...item, index: i }))
+    .filter((item) => item.char === sepChar);
+
+  const sepMap = new Map<number, CharWithId>();
+
+  const newSepCount = newSepIndexes.length;
+  const prevSepCount = prevSeps.length;
+
+  const freshCount =
+    newSepCount >= prevSepCount ? newSepCount - prevSepCount : 0;
+
+  const prevStartIndex =
+    newSepCount < prevSepCount ? prevSepCount - newSepCount : 0;
+
+  for (let i = 0; i < newSepIndexes.length; i++) {
+    const newSep = newSepIndexes[i];
+
+    if (i < freshCount) {
+      sepMap.set(newSep.index, {
+        id: `char-${globalId++}`,
+        char: sepChar,
+      });
+    } else {
+      const prevMatch = prevSeps[prevStartIndex + i - freshCount];
+      if (prevMatch) {
+        sepMap.set(newSep.index, {
+          id: prevMatch.id,
+          char: prevMatch.char,
+        });
+        used.add(prevMatch.index);
+      }
+    }
+  }
+
+  for (let i = 0; i < nextChars.length; i++) {
+    const char = nextChars[i];
+
+    if (char === sepChar && sepMap.has(i)) {
+      next.push(sepMap.get(i)!);
+      continue;
+    }
+
+    const matchIndex = prev.findIndex((item, j) => {
+      return !used.has(j) && item.char === char;
+    });
+
+    if (matchIndex !== -1) {
+      used.add(matchIndex);
+      next.push(prev[matchIndex]);
+    } else {
+      next.push({ id: `char-${globalId++}`, char });
+    }
+  }
+
+  return next;
+};
+
+export function createLayoutAnimation(baseAnim: any, config: AnimationConfigs) {
+  let anim = baseAnim;
+
+  if (config.type === 'timing') {
+    anim = anim.duration(config.duration);
+
+    if (typeof config.easing === 'function') {
+      anim = anim.easing(config.easing);
+    }
+  }
+
+  if (config.type === 'spring') {
+    anim = anim.springify();
+
+    if (typeof config.damping === 'number') {
+      anim = anim.damping(config.damping);
+    }
+    if (typeof config.mass === 'number') {
+      anim = anim.mass(config.mass);
+    }
+    if (typeof config.stiffness === 'number') {
+      anim = anim.stiffness(config.stiffness);
+    }
+
+    if (typeof config.overshootClamp === 'boolean') {
+      anim = anim.overshootClamp(config.overshootClamp);
+    }
+  }
+
+  return anim;
+}
+
+export function estimateSpringDuration(
+  mass: number = 1,
+  stiffness: number = 100,
+  damping: number = 10,
+): number {
+  const dampingRatio = damping / (2 * Math.sqrt(mass * stiffness));
+  const settlingTime = 2 * Math.PI * Math.sqrt(mass / stiffness) * dampingRatio;
+  return Math.round(settlingTime * 1000);
+}
