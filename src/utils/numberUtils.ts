@@ -1,6 +1,32 @@
 import { AnimationConfigs, CharWithId, SeparatorType } from '../types';
 
-let globalId = 0;
+// Use a more robust ID generation strategy
+class IdGenerator {
+  private static instance: IdGenerator;
+  private counter: number = 0;
+  private readonly prefix: string;
+
+  private constructor() {
+    this.prefix = `char_${Date.now()}_`;
+  }
+
+  static getInstance(): IdGenerator {
+    if (!IdGenerator.instance) {
+      IdGenerator.instance = new IdGenerator();
+    }
+    return IdGenerator.instance;
+  }
+
+  generate(): string {
+    return `${this.prefix}${++this.counter}`;
+  }
+
+  reset(): void {
+    this.counter = 0;
+  }
+}
+
+const idGenerator = IdGenerator.getInstance();
 
 export type CharData = {
   char: string;
@@ -102,7 +128,7 @@ export const updateCharList = (
 
     if (i < freshCount) {
       sepMap.set(newSep.index, {
-        id: `char-${globalId++}`,
+        id: idGenerator.generate(),
         char: sepChar,
       });
     } else {
@@ -133,7 +159,7 @@ export const updateCharList = (
       used.add(matchIndex);
       next.push(prev[matchIndex]);
     } else {
-      next.push({ id: `char-${globalId++}`, char });
+      next.push({ id: idGenerator.generate(), char });
     }
   }
 

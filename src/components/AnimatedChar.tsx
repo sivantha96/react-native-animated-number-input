@@ -10,7 +10,9 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import {
+  AccessibilityConfig,
   AnimationConfigs,
+  LayoutAnimations,
   SeparatorAnimationType,
   separatorMap,
   SeparatorType,
@@ -23,9 +25,10 @@ interface AnimatedCharProps {
   separatorAnimation: SeparatorAnimationType;
   animationConfig: AnimationConfigs;
   separator: SeparatorType;
-  layoutAnimations: any;
+  layoutAnimations: LayoutAnimations;
   fontSize: number;
   size: number;
+  accessibilityConfig?: AccessibilityConfig;
 }
 
 export const AnimatedChar = ({
@@ -37,6 +40,7 @@ export const AnimatedChar = ({
   layoutAnimations,
   fontSize,
   size,
+  accessibilityConfig,
 }: AnimatedCharProps) => {
   const animatedWidth = useSharedValue(size);
   const animatedFontSize = useSharedValue(fontSize);
@@ -117,6 +121,18 @@ export const AnimatedChar = ({
     return CustomLayout;
   }, [animationConfig]);
 
+  // Enhanced accessibility support
+  const accessibilityLabel = useMemo(() => {
+    if (accessibilityConfig?.customAccessibilityLabel) {
+      return accessibilityConfig.customAccessibilityLabel;
+    }
+
+    if (char === separatorMap.comma) return 'comma';
+    if (char === separatorMap.dot) return 'decimal point';
+    if (char === ' ') return 'space';
+    return char;
+  }, [char, accessibilityConfig?.customAccessibilityLabel, separator]);
+
   return (
     <Animated.Text
       entering={layoutAnimations.entering}
@@ -126,7 +142,11 @@ export const AnimatedChar = ({
           ? customLayoutAnimation
           : layoutAnimations.layout
       }
-      style={[textStyle, animatedTextStyle]}>
+      style={[textStyle, animatedTextStyle]}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityConfig?.customAccessibilityHint}
+      accessibilityRole="text"
+      importantForAccessibility="yes">
       {char}
     </Animated.Text>
   );

@@ -7,6 +7,10 @@ type Options = {
   defaultFontSize?: number;
 };
 
+/**
+ * @deprecated Use CharWidthProvider and useCharWidthContext instead for better performance
+ * This hook creates a new measurement component for each instance which can cause performance issues
+ */
 export function useCharacterWidthRatioAuto({
   characters = '1234567890',
   fontFamily,
@@ -14,6 +18,7 @@ export function useCharacterWidthRatioAuto({
 }: Options = {}): number | React.JSX.Element {
   const [ratio, setRatio] = useState<number | null>(null);
   const textRef = useRef<Text>(null);
+
   const onLayout = useCallback(
     (e: { nativeEvent: { layout: LayoutRectangle } }) => {
       const width = e.nativeEvent.layout.width;

@@ -14,9 +14,12 @@ import Animated, {
   LinearTransition,
 } from 'react-native-reanimated';
 
-import { useCharacterWidthRatioAuto } from '../hooks/useCharacterWidthRatioAuto';
+import { useCharWidthContext } from '../context/CharWidthContext';
+import { usePerformanceMonitoring } from '../hooks/usePerformanceMonitoring';
 import {
+  AccessibilityConfig,
   AnimationConfigs,
+  LayoutAnimations,
   SeparatorAnimationType,
   SeparatorType,
   TimingOptions,
@@ -28,6 +31,7 @@ import {
   updateCharList,
 } from '../utils/numberUtils';
 import { AnimatedChar } from './AnimatedChar';
+import { AnimatedNumberErrorBoundary } from './AnimatedNumberErrorBoundary';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -46,6 +50,10 @@ type AnimatedNumberProps = {
   precision?: number;
   decimalSeparator?: string;
   thousandSeparator?: string;
+  accessibilityConfig?: AccessibilityConfig;
+  enablePerformanceMonitoring?: boolean;
+  onError?: (error: Error) => void;
+  fallbackComponent?: React.ReactNode;
 };
 
 const defaultAnimationConfigs = {
@@ -68,12 +76,22 @@ export const AnimatedNumber = ({
   precision = 2,
   decimalSeparator = '.',
   thousandSeparator = ',',
+  accessibilityConfig,
+  enablePerformanceMonitoring = __DEV__,
+  onError,
+  fallbackComponent,
   ...textInputProps
 }: AnimatedNumberProps) => {
   const prevList = useRef<any>([]);
   const [containerWidth, setContainerWidth] = useState<number>(0);
 
   const inputRef = useRef<TextInput>(null);
+  const { getCharWidthRatio } = useCharWidthContext();
+  const { startAnimation, endAnimation, getMetrics } = usePerformanceMonitoring(
+    {
+      enableLogging: enablePerformanceMonitoring,
+    },
+  );
 
   const handleChangeText = useCallback(
     (text: string) => {
@@ -104,7 +122,7 @@ export const AnimatedNumber = ({
     return newList;
   }, [number, separator]);
 
-  const layoutAnimations = useMemo(() => {
+  const layoutAnimations = useMemo((): LayoutAnimations => {
     return {
       entering: createLayoutAnimation(FadeInDown, animationConfig),
       exiting: createLayoutAnimation(FadeOutDown, animationConfig),
@@ -117,11 +135,10 @@ export const AnimatedNumber = ({
     [decimalSeparator, number, thousandSeparator],
   );
 
-  const ratio = useCharacterWidthRatioAuto();
-  const charWidthRatio = useMemo(
-    () => (typeof ratio === 'number' ? ratio : 0.65),
-    [ratio],
-  );
+  const charWidthRatio = useMemo(() => {
+    const ratio = getCharWidthRatio();
+    return typeof ratio === 'number' ? ratio : 0.65;
+  }, [getCharWidthRatio]);
 
   const { autoFontSize, digitWidth } = useMemo(() => {
     let totalCharUnits = digits.reduce(
@@ -166,12 +183,25 @@ export const AnimatedNumber = ({
     thousandSeparator,
   ]);
 
-  return (
+  // Enhanced accessibility for the main component
+  const mainAccessibilityLabel = useMemo(() => {
+    if (accessibilityConfig?.customAccessibilityLabel) {
+      return accessibilityConfig.customAccessibilityLabel;
+    }
+    return `Number input with value ${number || placeholder || 'empty'}`;
+  }, [accessibilityConfig?.customAccessibilityLabel, number, placeholder]);
+
+  const renderContent = () => (
     <AnimatedPressable
       style={[styles.container, containerStyle]}
       layout={LinearTransition}
       onLayout={handleLayout}
-      onPress={handleContainerPress}>
+      onPress={handleContainerPress}
+      accessibilityLabel={mainAccessibilityLabel}
+      accessibilityHint={
+        accessibilityConfig?.customAccessibilityHint || 'Tap to edit number'
+      }
+      accessibilityRole="button">
       <TextInput
         ref={inputRef}
         style={[styles.hiddenInput, textStyle]}
@@ -185,10 +215,10 @@ export const AnimatedNumber = ({
 
       {prefix
         ?.split('')
-        .map((e) => (
+        .map((e, idx) => (
           <AnimatedChar
             char={e}
-            key={e}
+            key={`prefix-${e}-${idx}`}
             textStyle={textStyle}
             animationConfig={animationConfig}
             separator={separator}
@@ -196,6 +226,7 @@ export const AnimatedNumber = ({
             layoutAnimations={layoutAnimations}
             fontSize={autoFontSize}
             size={digitWidth}
+            accessibilityConfig={accessibilityConfig}
           />
         ))}
 
@@ -205,7 +236,7 @@ export const AnimatedNumber = ({
             .map((e, idx) => (
               <AnimatedChar
                 char={e}
-                key={`${e}-${idx}`}
+                key={`placeholder-${e}-${idx}`}
                 textStyle={textStyle}
                 animationConfig={animationConfig}
                 separator={separator}
@@ -213,6 +244,7 @@ export const AnimatedNumber = ({
                 layoutAnimations={layoutAnimations}
                 fontSize={autoFontSize}
                 size={digitWidth}
+                accessibilityConfig={accessibilityConfig}
               />
             ))
         : null}
@@ -229,16 +261,17 @@ export const AnimatedNumber = ({
             layoutAnimations={layoutAnimations}
             fontSize={autoFontSize}
             size={digitWidth}
+            accessibilityConfig={accessibilityConfig}
           />
         );
       })}
 
       {suffix
         ?.split('')
-        .map((e) => (
+        .map((e, idx) => (
           <AnimatedChar
             char={e}
-            key={e}
+            key={`suffix-${e}-${idx}`}
             textStyle={textStyle}
             animationConfig={animationConfig}
             separator={separator}
@@ -246,9 +279,16 @@ export const AnimatedNumber = ({
             layoutAnimations={layoutAnimations}
             fontSize={autoFontSize}
             size={digitWidth}
+            accessibilityConfig={accessibilityConfig}
           />
         ))}
     </AnimatedPressable>
+  );
+
+  return (
+    <AnimatedNumberErrorBoundary fallback={fallbackComponent} onError={onError}>
+      {renderContent()}
+    </AnimatedNumberErrorBoundary>
   );
 };
 

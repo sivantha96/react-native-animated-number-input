@@ -1,4 +1,7 @@
-import { EasingFunction } from 'react-native-reanimated';
+import {
+  EasingFunction,
+  LayoutAnimationFunction,
+} from 'react-native-reanimated';
 
 export interface TimingOptions {
   type: 'timing';
@@ -23,7 +26,27 @@ export interface CharWithId {
   char: string;
 }
 
+export interface LayoutAnimations {
+  entering: any;
+  exiting: any;
+  layout: LayoutAnimationFunction;
+}
+
+export interface PerformanceMetrics {
+  animationStartTime?: number;
+  animationEndTime?: number;
+  renderCount: number;
+  lastRenderTime: number;
+}
+
+export interface AccessibilityConfig {
+  announceChanges?: boolean;
+  customAccessibilityLabel?: string;
+  customAccessibilityHint?: string;
+  reduceMotion?: boolean;
+}
+
 export const separatorMap = {
   comma: ',',
   dot: '.',
-};
+} as const;
