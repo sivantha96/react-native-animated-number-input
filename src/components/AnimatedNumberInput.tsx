@@ -219,6 +219,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                 textStyle={[textStyle, styles.digit]}
                 entering={entering}
                 exiting={exiting}
+                textInputProps={textInputProps}
               />
             ))}
         {renderedDigits.length > 0
@@ -242,6 +243,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                   ]}
                   entering={entering}
                   exiting={exiting}
+                  textInputProps={textInputProps}
                 />
               );
             })
@@ -251,7 +253,8 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                   styles.placeholder,
                   { fontSize: autoFontSize },
                   placeholderStyles,
-                ]}>
+                ]}
+                {...textInputProps}>
                 {textInputProps.placeholder}
               </Text>
             )}
@@ -270,6 +273,7 @@ const AnimatedNumberInput: React.FC<AnimatedNumberInputProps> = ({
                 textStyle={[textStyle, styles.digit]}
                 entering={entering}
                 exiting={exiting}
+                textInputProps={textInputProps}
               />
             ))}
       </View>

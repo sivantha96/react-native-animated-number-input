@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleProp, TextStyle } from 'react-native';
+import { StyleProp, TextInputProps, TextStyle } from 'react-native';
 import Animated, {
   BaseAnimationBuilder,
   Easing,
@@ -28,7 +28,9 @@ const AnimatedText = ({
   animationDuration,
   exiting = FadeOutDown.duration(animationDuration),
   entering = FadeInDown.duration(animationDuration),
+  textInputProps,
 }: {
+  textInputProps: TextInputProps;
   value: string;
   size?: number;
   fontSize: number;
@@ -77,7 +79,8 @@ const AnimatedText = ({
         style={[textStyle, animatedTextStyle]}
         numberOfLines={1}
         ellipsizeMode="clip"
-        accessible={false}>
+        accessible={false}
+        {...textInputProps}>
         {value}
       </Animated.Text>
     </Animated.View>
