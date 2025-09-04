@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/sivantha96/react-native-animated-number-input/compare/v1.2.0...v1.3.0) (2025-09-04)
+
+
+### Features
+
+* pass textInputProps to AnimatedText component for better text input customization ([47f42f9](https://github.com/sivantha96/react-native-animated-number-input/commit/47f42f9df651deaf02b80cd790e50ad5fc2ab8b9))
+
 # [1.2.0](https://github.com/sivantha96/react-native-animated-number-input/compare/v1.1.0...v1.2.0) (2025-07-09)
 
 
